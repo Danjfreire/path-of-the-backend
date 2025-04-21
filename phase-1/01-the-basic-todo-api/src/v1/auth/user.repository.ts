@@ -12,4 +12,10 @@ export class UserRepository {
 
     return createdUser;
   }
+
+  async findUser(data: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    const user = await this.prismaService.user.findUnique({ where: data });
+
+    return user;
+  }
 }
