@@ -6,7 +6,7 @@ import { Prisma, User } from 'generated/prisma';
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async registerUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
     const createdUser = await this.prismaService.user.create({ data });
     // TODO: Handle unique constraint errors
 

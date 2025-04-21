@@ -12,10 +12,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async registerUser(dto: RegisterUserDTO) {
+  async createUser(dto: RegisterUserDTO) {
     const passwordHash = await hash(dto.password, 10);
 
-    const user = await this.userRepository.registerUser({
+    const user = await this.userRepository.createUser({
       ...dto,
       password: passwordHash,
     });
