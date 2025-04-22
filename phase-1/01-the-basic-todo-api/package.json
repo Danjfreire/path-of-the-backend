@@ -9,17 +9,19 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "dev": "npm run services:up && nest start --watch --env-file .env.development",
+    "dev": "npm run services:dev:up && nest start --watch --env-file .env.development",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
-    "services:up": "docker compose up -d",
-    "services:down": "docker compose down"
+    "pretest:watch": "npm run services:test:up && npm run prisma:migrate:test",
+    "test:watch": "dotenv -e .env.test -- jest --watch --runInBand",
+    "posttest:watch": "npm run services:test:down",
+    "test": "jest --config ./test/jest-e2e.json",
+    "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "prisma:migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
+    "services:dev:up": "docker compose up db-dev -d",
+    "services:dev:down": "docker compose down db-dev",
+    "services:test:up": "docker compose up db-test -d",
+    "services:test:down": "docker compose down db-test"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -80,6 +82,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^generated/(.*)$": "<rootDir>/../generated/$1",
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }

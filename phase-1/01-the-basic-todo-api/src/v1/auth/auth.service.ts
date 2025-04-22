@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegisterUserDTO } from './dto/register-user.dto';
+import { CreateUserDTO } from './dto/register-user.dto';
 import { UserRepository } from './user.repository';
 import { compare, hash } from 'bcrypt';
 import { LoginUserDTO } from './dto/login-user.dto';
@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(dto: RegisterUserDTO) {
+  async createUser(dto: CreateUserDTO) {
     const passwordHash = await hash(dto.password, 10);
 
     const user = await this.userRepository.createUser({
