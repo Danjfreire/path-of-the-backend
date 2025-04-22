@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     PrismaDatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, cache: true }),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

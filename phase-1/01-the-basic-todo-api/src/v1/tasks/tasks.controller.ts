@@ -7,40 +7,55 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { Task } from 'generated/prisma';
 import { UpdateTaskDTO } from './dto/update-task.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { ReqUser } from '../auth/user.decorator';
+import { RequestUser } from '../auth/models/request-user';
 
+@UseGuards(AuthGuard)
 @Controller('v1/tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  async findAll() {
-    const tasks = await this.tasksService.findAllTasks('test');
+  async findAll(@ReqUser() user: RequestUser): Promise<Task[]> {
+    const tasks = await this.tasksService.findAllTasks(user.id);
 
     return tasks;
   }
 
   @Get('/:id')
-  async findTask(@Param('id') taskId: string) {
-    const task = await this.tasksService.findTask('test', taskId);
+  async findTask(
+    @Param('id') taskId: string,
+    @ReqUser() user: RequestUser,
+  ): Promise<Task> {
+    const task = await this.tasksService.findTask(user.id, taskId);
 
     return task;
   }
 
   @Post()
-  async createTask(@Body() dto: CreateTaskDTO): Promise<Task> {
-    const task = await this.tasksService.createTask('test', dto);
+  async createTask(
+    @Body() dto: CreateTaskDTO,
+    @ReqUser() user: RequestUser,
+  ): Promise<Task> {
+    const task = await this.tasksService.createTask(user.id, dto);
 
     return task;
   }
 
   @Patch('/:id')
-  async updateTask(@Param('id') taskId: string, @Body() dto: UpdateTaskDTO) {
-    const task = await this.tasksService.updateTask('test', taskId, dto);
+  async updateTask(
+    @Param('id') taskId: string,
+    @Body() dto: UpdateTaskDTO,
+    @ReqUser() user: RequestUser,
+  ): Promise<Task> {
+    const task = await this.tasksService.updateTask(user.id, taskId, dto);
 
     if (!task) {
       throw new NotFoundException('task-not-found');
