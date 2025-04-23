@@ -7,10 +7,18 @@ export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    const createdUser = await this.prismaService.user.create({ data });
-    // TODO: Handle unique constraint errors
-
-    return createdUser;
+    try {
+      const createdUser = await this.prismaService.user.create({ data });
+      return createdUser;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // error P2002 is a unique constraint violation, in this case the email already exists
+        if (error.code === 'P2002') {
+          throw new Error('email-already-exists');
+        }
+      }
+      throw error;
+    }
   }
 
   async findUser(data: Prisma.UserWhereUniqueInput): Promise<User | null> {
