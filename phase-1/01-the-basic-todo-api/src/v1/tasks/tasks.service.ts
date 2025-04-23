@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TasksRepository } from './tasks.repository';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { Task } from 'generated/prisma';
@@ -25,17 +25,21 @@ export class TasksService {
     return tasks;
   }
 
-  async findTask(userId: string, taskId: string): Promise<Task> {
+  async findTask(userId: string, taskId: string): Promise<Task | null> {
     const task = await this.taskRepository.findTaskById(userId, taskId);
 
     if (!task) {
-      throw new NotFoundException();
+      return null;
     }
 
     return task;
   }
 
-  async updateTask(userId: string, taskId: string, dto: UpdateTaskDTO) {
+  async updateTask(
+    userId: string,
+    taskId: string,
+    dto: UpdateTaskDTO,
+  ): Promise<Task | null> {
     const task = await this.taskRepository.updateTask({
       userId,
       taskId,
@@ -43,5 +47,9 @@ export class TasksService {
     });
 
     return task;
+  }
+
+  async deleteTask(userId: string, taskId: string): Promise<boolean> {
+    return await this.taskRepository.deleteTask(userId, taskId);
   }
 }

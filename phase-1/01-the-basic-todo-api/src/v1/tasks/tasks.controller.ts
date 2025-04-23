@@ -23,7 +23,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  async findAll(@ReqUser() user: RequestUser): Promise<Task[]> {
+  async findAllTasks(@ReqUser() user: RequestUser): Promise<Task[]> {
     const tasks = await this.tasksService.findAllTasks(user.id);
 
     return tasks;
@@ -35,6 +35,10 @@ export class TasksController {
     @ReqUser() user: RequestUser,
   ): Promise<Task> {
     const task = await this.tasksService.findTask(user.id, taskId);
+
+    if (!task) {
+      throw new NotFoundException('task-not-found');
+    }
 
     return task;
   }
@@ -64,6 +68,12 @@ export class TasksController {
     return task;
   }
 
-  @Delete()
-  async deleteTask() {}
+  @Delete('/:id')
+  async deleteTask(@Param('id') taskId: string, @ReqUser() user: RequestUser) {
+    const result = await this.tasksService.deleteTask(user.id, taskId);
+
+    if (!result) {
+      throw new NotFoundException('task-not-found');
+    }
+  }
 }

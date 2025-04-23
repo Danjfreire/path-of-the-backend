@@ -23,7 +23,7 @@ export class AuthService {
     return user.id;
   }
 
-  async signIn(dto: LoginUserDTO): Promise<{ access_token: string } | null> {
+  async login(dto: LoginUserDTO): Promise<{ access_token: string } | null> {
     const user = await this.userRepository.findUser({
       email: dto.email,
     });

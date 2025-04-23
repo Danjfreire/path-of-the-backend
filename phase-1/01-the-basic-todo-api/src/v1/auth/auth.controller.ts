@@ -33,7 +33,7 @@ export class AuthController {
   async loginUser(
     @Body() dto: LoginUserDTO,
   ): Promise<{ access_token: string }> {
-    const res = await this.authService.signIn(dto);
+    const res = await this.authService.login(dto);
 
     if (!res) {
       throw new UnauthorizedException('invalid-credentials');
