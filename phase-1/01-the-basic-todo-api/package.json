@@ -16,7 +16,7 @@
     "test:watch": "dotenv -e .env.test -- jest --watch --runInBand",
     "posttest:watch": "npm run services:test:down",
     "pretest": "npm run services:test:up && npm run prisma:migrate:test",
-    "test": "dotenv -e .env.test -- jest --runInBand",
+    "test": "dotenv -e .env.test -- jest --runInBand --coverage",
     "posttest": "npm run services:test:down",
     "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
     "prisma:migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
