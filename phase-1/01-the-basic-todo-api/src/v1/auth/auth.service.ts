@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDTO } from './dto/register-user.dto';
 import { UserRepository } from './user.repository';
 import { compare, hash } from 'bcrypt';
@@ -23,19 +23,19 @@ export class AuthService {
     return user.id;
   }
 
-  async signIn(dto: LoginUserDTO) {
+  async signIn(dto: LoginUserDTO): Promise<{ access_token: string } | null> {
     const user = await this.userRepository.findUser({
       email: dto.email,
     });
 
     if (!user) {
-      throw new UnauthorizedException('invalid-credentials');
+      return null;
     }
 
     const isPasswordValid = await compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('invalid-credentials');
+      return null;
     }
 
     const token = await this.jwtService.signAsync({

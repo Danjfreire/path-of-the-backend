@@ -16,8 +16,6 @@ export class PrismaTestUtils {
 
     try {
       await this.prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
-
-      console.log('Database cleaned!');
     } catch (error) {
       console.error(error);
     }

@@ -4,6 +4,7 @@ import {
   Controller,
   InternalServerErrorException,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDTO } from './dto/register-user.dto';
@@ -32,6 +33,12 @@ export class AuthController {
   async loginUser(
     @Body() dto: LoginUserDTO,
   ): Promise<{ access_token: string }> {
-    return await this.authService.signIn(dto);
+    const res = await this.authService.signIn(dto);
+
+    if (!res) {
+      throw new UnauthorizedException('invalid-credentials');
+    }
+
+    return res;
   }
 }
