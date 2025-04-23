@@ -81,7 +81,7 @@ describe('TaskModule - deleteTask', () => {
     expect(taskAfterDeletion).toBeNull();
   });
 
-  it(`GET - v1/tasks/:id should throw not found if task is not found`, async () => {
+  it(`DELETE - v1/tasks/:id should throw not found if task is not found`, async () => {
     const loginRes = await signInForTest(authService, {
       email: 'email@email.com',
       password: 'password',
