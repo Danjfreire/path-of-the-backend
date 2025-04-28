@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../users/user.repository';
 import { CreateUserDTO } from './dto/register-user.dto';
 import { hash } from 'bcrypt';
+import { UserCreatedDTO } from './dto/user-created.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,6 @@ export class AuthService {
       password: passwordHash,
     });
 
-    return user.id;
+    return new UserCreatedDTO(user);
   }
 }

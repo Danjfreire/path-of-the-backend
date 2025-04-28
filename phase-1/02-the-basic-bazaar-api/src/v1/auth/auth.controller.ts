@@ -1,9 +1,11 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   ConflictException,
   Controller,
   InternalServerErrorException,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDTO } from './dto/register-user.dto';
@@ -12,11 +14,11 @@ import { CreateUserDTO } from './dto/register-user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('/signup')
   async createUser(@Body() dto: CreateUserDTO) {
     try {
-      const id = await this.authService.createUser(dto);
-      return { id };
+      return await this.authService.createUser(dto);
     } catch (error) {
       if (error instanceof Error) {
         throw new ConflictException(error.message);
