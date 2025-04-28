@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../users/user.repository';
 import { CreateUserDTO } from './dto/register-user.dto';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { UserCreatedDTO } from './dto/user-created.dto';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersRepository: UserRepository) {}
+  constructor(
+    private readonly usersRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createUser(dto: CreateUserDTO) {
     const passwordHash = await hash(dto.password, 10);
@@ -17,5 +22,31 @@ export class AuthService {
     });
 
     return new UserCreatedDTO(user);
+  }
+
+  async loginUser(dto: LoginUserDTO) {
+    const user = await this.usersRepository.findUser({
+      email: dto.email,
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    const isPasswordValid = await compare(dto.password, user.password);
+
+    if (!isPasswordValid) {
+      return null;
+    }
+
+    const token = await this.jwtService.signAsync({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return {
+      access_token: token,
+    };
   }
 }
