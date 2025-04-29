@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../users/user.repository';
 import { CreateUserDTO } from './dto/register-user.dto';
 import { hash, compare } from 'bcrypt';
-import { UserCreatedDTO } from './dto/user-created.dto';
+import { UserOutputDto } from './dto/user-output.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -21,7 +21,7 @@ export class AuthService {
       password: passwordHash,
     });
 
-    return new UserCreatedDTO(user);
+    return new UserOutputDto(user);
   }
 
   async loginUser(dto: LoginUserDTO) {

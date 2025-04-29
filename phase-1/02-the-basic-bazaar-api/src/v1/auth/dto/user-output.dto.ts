@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 
-export class UserCreatedDTO {
+export class UserOutputDto {
   id: string;
   name: string;
   email: string;
@@ -9,7 +9,7 @@ export class UserCreatedDTO {
   @Exclude()
   password: string;
 
-  constructor(partial: Partial<UserCreatedDTO>) {
+  constructor(partial: Partial<UserOutputDto>) {
     Object.assign(this, partial);
   }
 }

@@ -59,6 +59,24 @@ describe('AuthModule - LoginUser', () => {
     expect(isJWT(response.body.access_token)).toBe(true);
   });
 
+  it(`POST - v1/auth/login should throw an error if password is incorrect`, async () => {
+    const mockCreateUserDto: CreateUserDTO = {
+      name: 'John Doe',
+      email: 'john@email.com',
+      password: 'safepassword',
+    };
+
+    await authController.createUser(mockCreateUserDto);
+
+    await request(app.getHttpServer())
+      .post('/v1/auth/login')
+      .send({
+        email: mockCreateUserDto.email,
+        password: 'wrongpassword',
+      })
+      .expect(401);
+  });
+
   it(`POST - v1/auth/login should throw error if user is not found`, async () => {
     const response = await request(app.getHttpServer())
       .post('/v1/auth/login')
