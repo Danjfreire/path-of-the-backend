@@ -3,6 +3,7 @@ import { Prisma, User } from 'generated/prisma';
 import { PrismaService } from 'src/_shared/prisma-database/prisma.service';
 import { UserInfo } from './models/user.model';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryResult } from 'src/_shared/types/queryResult';
 
 @Injectable()
 export class UserRepository {
@@ -34,13 +35,7 @@ export class UserRepository {
   async findAllUsers(
     data: Prisma.UserWhereInput,
     options: { limit: number; offset: number },
-  ): Promise<{
-    results: UserInfo[];
-    page: number;
-    nbPages: number;
-    resultsPerPage: number;
-    total: number;
-  }> {
+  ): Promise<QueryResult<UserInfo>> {
     const [total, users] = await Promise.all([
       this.prismaService.user.count({ where: data }),
       this.prismaService.user.findMany({

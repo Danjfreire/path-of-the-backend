@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -16,6 +18,9 @@ import { AuthGuard } from 'src/_shared/authorization/guards/auth.guard';
 import { Roles } from 'src/_shared/authorization/decorators/roles.decorator';
 import { ReqUser } from 'src/_shared/authorization/decorators/user.decorator';
 import { TokenPayload } from '../auth/models/token-payload';
+import { ValidateEnum } from 'src/_shared/pipes/validate-enum.pipe';
+import { productOrder, productSortBy } from './models/validations';
+import { $Enums, ProductCategory } from 'generated/prisma';
 
 @UseGuards(AuthGuard)
 @Controller('v1/products')
@@ -32,8 +37,25 @@ export class ProductsController {
   }
 
   @Get()
-  findAllProducts() {
-    return this.productsService.findAll();
+  findAllProducts(
+    @Query('page', ParseIntPipe) page: number = 0,
+    @Query('limit', ParseIntPipe) limit: number = 10,
+    @Query('category', new ValidateEnum($Enums.ProductCategory, false))
+    category?: ProductCategory,
+    @Query('name') name?: string,
+    @Query('sortBy', new ValidateEnum(productSortBy, false))
+    sortBy?: string,
+    @Query('order', new ValidateEnum(productOrder, false))
+    order?: string,
+  ) {
+    return this.productsService.findAll({
+      page,
+      limit,
+      category,
+      name,
+      sortBy,
+      order,
+    });
   }
 
   @Roles('ADMIN', 'USER')

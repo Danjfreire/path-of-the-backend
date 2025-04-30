@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
+import { ProductCategory } from 'generated/prisma';
 
 @Injectable()
 export class ProductsService {
@@ -12,8 +13,15 @@ export class ProductsService {
     return this.productsRepository.create(userId, dto);
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(options: {
+    page: number;
+    limit: number;
+    category?: ProductCategory;
+    name?: string;
+    sortBy?: string;
+    order?: string;
+  }) {
+    return await this.productsRepository.findAll(options);
   }
 
   async findProduct(id: string) {
