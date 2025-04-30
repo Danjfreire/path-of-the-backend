@@ -9,7 +9,7 @@ import { signInForTest } from 'src/_shared/test-utils/signin-for-test.util';
 import { AuthService } from 'src/v1/auth/auth.service';
 import { AuthModule } from 'src/v1/auth/auth.module';
 
-describe('UserModule - findUser', () => {
+describe('UserModule - findAllUsers', () => {
   let app: INestApplication;
   let prismaUtils: PrismaTestUtils;
   let authService: AuthService;
@@ -37,83 +37,87 @@ describe('UserModule - findUser', () => {
     await app.close();
   });
 
-  it(`GET - v1/users/:id a user should be able to find themselves`, async () => {
+  it(`GET - v1/users a user should not be able to find all other users`, async () => {
     const res = await signInForTest(authService, {
       role: 'USER',
       email: 'john@email.com',
       password: '123456',
-    });
-
-    const response = await request(app.getHttpServer())
-      .get(`/v1/users/${res.user.id}`)
-      .set('Authorization', `Bearer ${res.access_token}`)
-      .expect(200);
-
-    expect(response.body.id).toEqual(res.user.id);
-    expect(response.body.email).toEqual(res.user.email);
-    expect(response.body.role).toEqual(res.user.role);
-    expect(response.body.name).toEqual(res.user.name);
-    expect(response.body.password).toBeUndefined();
-  });
-
-  it(`GET - v1/users/:id an admin should be able to find any user`, async () => {
-    const mockCreateUserDto = {
-      name: 'John Doe',
-      email: 'john@email.com',
-      password: '123456',
-    };
-    const user = await authService.createUser(mockCreateUserDto);
-    const res = await signInForTest(authService, {
-      role: 'ADMIN',
-      email: 'admin@email.com',
-      password: 'admin123',
-    });
-
-    const response = await request(app.getHttpServer())
-      .get(`/v1/users/${user.id}`)
-      .set('Authorization', `Bearer ${res.access_token}`)
-      .expect(200);
-
-    expect(response.body.id).toEqual(user.id);
-    expect(response.body.email).toEqual(user.email);
-    expect(response.body.role).toEqual(user.role);
-    expect(response.body.name).toEqual(user.name);
-    expect(response.body.password).toBeUndefined();
-  });
-
-  it(`GET - v1/users/:id a user should not be able to find other user`, async () => {
-    const mockCreateUserDto = {
-      name: 'John Doe',
-      email: 'john@email.com',
-      password: '123456',
-    };
-    const user = await authService.createUser(mockCreateUserDto);
-    const res = await signInForTest(authService, {
-      role: 'USER',
-      email: 'userx@email.com',
-      password: 'user123',
     });
 
     await request(app.getHttpServer())
-      .get(`/v1/users/${user.id}`)
+      .get(`/v1/users`)
       .set('Authorization', `Bearer ${res.access_token}`)
       .expect(403);
   });
 
-  it(`GET - v1/users/:id should throw error if user cannot be found`, async () => {
+  it(`GET - v1/users an admin should be able to find all users`, async () => {
+    const mockUser1 = {
+      name: 'John Doe',
+      email: 'john@email.com',
+      password: '123456',
+    };
+
+    const mockUser2 = {
+      name: 'John Doesnt',
+      email: 'johndoesnt@email.com',
+      password: '123456',
+    };
+
+    await authService.createUser(mockUser1);
+    await authService.createUser(mockUser2);
+
     const res = await signInForTest(authService, {
       role: 'ADMIN',
       email: 'admin@email.com',
       password: 'admin123',
     });
 
-    await request(app.getHttpServer())
-      .get(`/v1/users/someUser`)
+    const response1 = await request(app.getHttpServer())
+      .get(`/v1/users`)
+      .query({ limit: 1, page: 0 })
       .set('Authorization', `Bearer ${res.access_token}`)
-      .expect(404);
+      .expect(200);
+
+    expect(response1.body.results.length).toBe(1);
+    expect(response1.body.total).toBe(2);
+    expect(response1.body.resultsPerPage).toBe(1);
+    expect(response1.body.nbPages).toBe(2);
+    expect(response1.body.page).toBe(0);
+
+    const response2 = await request(app.getHttpServer())
+      .get(`/v1/users`)
+      .query({ limit: 1, page: 1 })
+      .set('Authorization', `Bearer ${res.access_token}`)
+      .expect(200);
+
+    expect(response2.body.results.length).toBe(1);
+    expect(response2.body.total).toBe(2);
+    expect(response2.body.resultsPerPage).toBe(1);
+    expect(response2.body.nbPages).toBe(2);
+    expect(response2.body.page).toBe(1);
   });
 
-  it(`GET - v1/users/:id should throw error if requester is not authenticated`, async () => {
+  it(`GET - v1/users should return correctly if no users are found`, async () => {
+    const res = await signInForTest(authService, {
+      role: 'ADMIN',
+      email: 'admin@email.com',
+      password: 'admin123',
+    });
+
+    const response1 = await request(app.getHttpServer())
+      .get(`/v1/users`)
+      .query({ limit: 10, page: 0 })
+      .set('Authorization', `Bearer ${res.access_token}`)
+      .expect(200);
+
+    expect(response1.body.results.length).toBe(0);
+    expect(response1.body.total).toBe(0);
+    expect(response1.body.resultsPerPage).toBe(10);
+    expect(response1.body.nbPages).toBe(0);
+    expect(response1.body.page).toBe(0);
+  });
+
+  it(`GET - v1/users should throw error if requester is not authenticated`, async () => {
     await request(app.getHttpServer()).get(`/v1/users/someUser`).expect(401);
   });
 });

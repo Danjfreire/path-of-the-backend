@@ -9,7 +9,7 @@ import { signInForTest } from 'src/_shared/test-utils/signin-for-test.util';
 import { AuthService } from 'src/v1/auth/auth.service';
 import { AuthModule } from 'src/v1/auth/auth.module';
 
-describe('UserModule - findUser', () => {
+describe('UserModule - updateUser', () => {
   let app: INestApplication;
   let prismaUtils: PrismaTestUtils;
   let authService: AuthService;
@@ -37,26 +37,28 @@ describe('UserModule - findUser', () => {
     await app.close();
   });
 
-  it(`GET - v1/users/:id a user should be able to find themselves`, async () => {
+  it(`PATCH - v1/users/:id a user should be able to update themselves`, async () => {
     const res = await signInForTest(authService, {
+      name: 'John Doe',
       role: 'USER',
       email: 'john@email.com',
       password: '123456',
     });
 
     const response = await request(app.getHttpServer())
-      .get(`/v1/users/${res.user.id}`)
+      .patch(`/v1/users/${res.user.id}`)
       .set('Authorization', `Bearer ${res.access_token}`)
+      .send({ name: 'John Doe Updated' })
       .expect(200);
 
     expect(response.body.id).toEqual(res.user.id);
     expect(response.body.email).toEqual(res.user.email);
     expect(response.body.role).toEqual(res.user.role);
-    expect(response.body.name).toEqual(res.user.name);
+    expect(response.body.name).toEqual('John Doe Updated');
     expect(response.body.password).toBeUndefined();
   });
 
-  it(`GET - v1/users/:id an admin should be able to find any user`, async () => {
+  it(`PATCH - v1/users/:id an admin should be able to update any user`, async () => {
     const mockCreateUserDto = {
       name: 'John Doe',
       email: 'john@email.com',
@@ -70,18 +72,19 @@ describe('UserModule - findUser', () => {
     });
 
     const response = await request(app.getHttpServer())
-      .get(`/v1/users/${user.id}`)
+      .patch(`/v1/users/${user.id}`)
       .set('Authorization', `Bearer ${res.access_token}`)
+      .send({ name: 'John Doe Updated' })
       .expect(200);
 
     expect(response.body.id).toEqual(user.id);
     expect(response.body.email).toEqual(user.email);
     expect(response.body.role).toEqual(user.role);
-    expect(response.body.name).toEqual(user.name);
+    expect(response.body.name).toEqual('John Doe Updated');
     expect(response.body.password).toBeUndefined();
   });
 
-  it(`GET - v1/users/:id a user should not be able to find other user`, async () => {
+  it(`PATCH - v1/users/:id a user should not be able to update other user`, async () => {
     const mockCreateUserDto = {
       name: 'John Doe',
       email: 'john@email.com',
@@ -95,12 +98,13 @@ describe('UserModule - findUser', () => {
     });
 
     await request(app.getHttpServer())
-      .get(`/v1/users/${user.id}`)
+      .patch(`/v1/users/${user.id}`)
       .set('Authorization', `Bearer ${res.access_token}`)
+      .send({ name: 'John Doe Updated' })
       .expect(403);
   });
 
-  it(`GET - v1/users/:id should throw error if user cannot be found`, async () => {
+  it(`PATCH - v1/users/:id should throw error if user cannot be found`, async () => {
     const res = await signInForTest(authService, {
       role: 'ADMIN',
       email: 'admin@email.com',
@@ -108,12 +112,13 @@ describe('UserModule - findUser', () => {
     });
 
     await request(app.getHttpServer())
-      .get(`/v1/users/someUser`)
+      .patch(`/v1/users/someUser`)
       .set('Authorization', `Bearer ${res.access_token}`)
+      .send({ name: 'John Doe Updated' })
       .expect(404);
   });
 
-  it(`GET - v1/users/:id should throw error if requester is not authenticated`, async () => {
-    await request(app.getHttpServer()).get(`/v1/users/someUser`).expect(401);
+  it(`PATCH - v1/users/:id should throw error if requester is not authenticated`, async () => {
+    await request(app.getHttpServer()).patch(`/v1/users/someUser`).expect(401);
   });
 });
