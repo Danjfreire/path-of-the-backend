@@ -20,9 +20,34 @@ enum UserRole {
 }
 
 model User {
-  id       String   @id @default(uuid())
+  id       String    @id @default(uuid())
   name     String
-  email    String   @unique
+  email    String    @unique
   password String
-  role     UserRole @default(USER)
+  role     UserRole  @default(USER)
+  products Product[]
+}
+
+enum ProductCategory {
+  BOOKS
+  CLOTHING
+  ELECTRONICS
+  FASHION
+  HOME
+  BEAUTY
+  SPORTS
+  OTHER
+}
+
+model Product {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  category    ProductCategory
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  isAvailable Boolean         @default(true)
+  sellerId    String
+  seller      User            @relation(fields: [sellerId], references: [id])
 }

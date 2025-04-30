@@ -20,6 +20,7 @@
     "posttest": "npm run services:test:down",
     "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
     "prisma:migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate",
     "services:dev:up": "docker compose up db-dev -d",
     "services:dev:down": "docker compose down db-dev",
     "services:test:up": "docker compose up db-test -d",
