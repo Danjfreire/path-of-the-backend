@@ -8,7 +8,7 @@ import { ProductsRepository } from './products.repository';
 export class ProductsService {
   constructor(private readonly productsRepository: ProductsRepository) {}
 
-  async create(userId: string, dto: CreateProductDto) {
+  async createProduct(userId: string, dto: CreateProductDto) {
     return this.productsRepository.create(userId, dto);
   }
 
@@ -16,8 +16,8 @@ export class ProductsService {
     return `This action returns all products`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findProduct(id: string) {
+    return await this.productsRepository.findProduct(id);
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

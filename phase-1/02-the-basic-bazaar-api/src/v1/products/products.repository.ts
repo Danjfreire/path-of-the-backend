@@ -30,8 +30,12 @@ export class ProductsRepository {
     return `This action returns all products`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findProduct(id: string) {
+    const product = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    return product;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

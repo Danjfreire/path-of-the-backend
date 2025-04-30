@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -27,7 +28,7 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @ReqUser() user: TokenPayload,
   ) {
-    return this.productsService.create(user.sub, createProductDto);
+    return this.productsService.createProduct(user.sub, createProductDto);
   }
 
   @Get()
@@ -35,9 +36,16 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Roles('ADMIN', 'USER')
   @Get(':id')
-  findProduct(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findProduct(@Param('id') id: string) {
+    const product = await this.productsService.findProduct(id);
+
+    if (!product) {
+      throw new NotFoundException('product--not-found');
+    }
+
+    return product;
   }
 
   @Patch(':id')
