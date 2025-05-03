@@ -22,11 +22,14 @@ export class OrdersService {
     }
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAllUserOrders(
+    userId: string,
+    options: { page: number; limit: number },
+  ) {
+    return await this.ordersRepository.findAllUserOrders(userId, options);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOrder(userId: string, orderId: string) {
+    return await this.ordersRepository.findOrder(userId, orderId);
   }
 }

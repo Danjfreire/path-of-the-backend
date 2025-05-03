@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from 'src/_shared/prisma-database/prisma.service';
 import { Order } from 'generated/prisma';
+import { QueryResult } from 'src/_shared/types/queryResult';
 
 @Injectable()
 export class OrdersRepository {
@@ -95,11 +96,56 @@ export class OrdersRepository {
     });
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAllUserOrders(
+    userId: string,
+    options: { page: number; limit: number },
+  ): Promise<QueryResult<Order>> {
+    const { page, limit } = options;
+
+    const [orders, totalOrders] = await this.prismaService.$transaction([
+      this.prismaService.order.findMany({
+        where: {
+          userId,
+        },
+        skip: page * limit,
+        take: limit,
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.order.count({
+        where: {
+          userId,
+        },
+      }),
+    ]);
+
+    return {
+      results: orders,
+      page,
+      nbPages: Math.ceil(totalOrders / limit),
+      resultsPerPage: limit,
+      total: totalOrders,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOrder(userId: string, orderId: string) {
+    return await this.prismaService.order.findFirst({
+      where: {
+        id: orderId,
+        userId,
+      },
+      include: {
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
   }
 }
