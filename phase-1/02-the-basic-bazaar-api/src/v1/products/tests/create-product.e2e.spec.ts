@@ -34,7 +34,7 @@ describe('ProductModule - createProduct', () => {
   });
 
   afterEach(async () => {
-    await prismaUtils.cleanDatabase();
+    await prismaUtils.clearDatabase();
   });
 
   afterAll(async () => {

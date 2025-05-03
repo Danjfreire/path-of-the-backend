@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma-database/prisma.service';
 export class PrismaTestUtils {
   constructor(private readonly prisma: PrismaService) {}
 
-  async cleanDatabase() {
+  async clearDatabase() {
     const tablenames = await this.prisma.$queryRaw<
       Array<{ tablename: string }>
     >`SELECT tablename FROM pg_tables WHERE schemaname='public'`;

@@ -32,7 +32,7 @@ describe('AuthModule - CreateUser', () => {
   });
 
   afterEach(async () => {
-    await prismaUtils.cleanDatabase();
+    await prismaUtils.clearDatabase();
   });
 
   afterAll(async () => {

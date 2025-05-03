@@ -26,6 +26,7 @@ model User {
   password String
   role     UserRole  @default(USER)
   products Product[]
+  orders   Order[]
 }
 
 enum ProductCategory {
@@ -51,4 +52,39 @@ model Product {
   sellerId    String
   seller      User            @relation(fields: [sellerId], references: [id])
   deletedAt   DateTime?
+  orderItem   OrderItem?
+}
+
+model OrderItem {
+  id            String  @id @default(uuid())
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id])
+  productId     String  @unique
+  product       Product @relation(fields: [productId], references: [id])
+  purchasePrice Float
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  status     OrderStatus @default(PENDING)
+  totalPrice Float
+}
+
+model IdempotencyRequest {
+  key       String   @id
+  userId    String
+  createdAt DateTime @default(now())
+  response  Json
 }

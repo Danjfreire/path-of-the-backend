@@ -138,9 +138,36 @@ exports.Prisma.ProductScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  purchasePrice: 'purchasePrice'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status',
+  totalPrice: 'totalPrice'
+};
+
+exports.Prisma.IdempotencyRequestScalarFieldEnum = {
+  key: 'key',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  response: 'response'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -151,6 +178,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
@@ -168,9 +201,19 @@ exports.ProductCategory = exports.$Enums.ProductCategory = {
   OTHER: 'OTHER'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  Product: 'Product'
+  Product: 'Product',
+  OrderItem: 'OrderItem',
+  Order: 'Order',
+  IdempotencyRequest: 'IdempotencyRequest'
 };
 
 /**

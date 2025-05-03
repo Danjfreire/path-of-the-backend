@@ -30,7 +30,7 @@ describe('UserModule - findUser', () => {
   });
 
   afterEach(async () => {
-    await prismaUtils.cleanDatabase();
+    await prismaUtils.clearDatabase();
   });
 
   afterAll(async () => {
