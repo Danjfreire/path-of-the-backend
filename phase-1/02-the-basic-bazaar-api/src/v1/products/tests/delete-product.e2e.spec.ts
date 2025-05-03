@@ -9,8 +9,9 @@ import { AuthService } from 'src/v1/auth/auth.service';
 import { AuthModule } from 'src/v1/auth/auth.module';
 import { ProductsModule } from '../products.module';
 import { CreateProductDto } from '../dto/create-product.dto';
+import { isDateString } from 'class-validator';
 
-describe('ProductModule - updateProduct', () => {
+describe('ProductModule - deleteProduct', () => {
   let app: INestApplication;
   let prismaUtils: PrismaTestUtils;
   let authService: AuthService;
@@ -38,7 +39,7 @@ describe('ProductModule - updateProduct', () => {
     await app.close();
   });
 
-  it(`PATCH - v1/products/:id a user should be able to update their own products`, async () => {
+  it(`DELETE - v1/products/:id a user should be able to delete their own products`, async () => {
     const res = await signInForTest(authService, {
       role: 'USER',
       email: 'john@email.com',
@@ -58,30 +59,16 @@ describe('ProductModule - updateProduct', () => {
       .send(mockCreateProductDto)
       .expect(201);
 
-    const updateProductDto = {
-      name: 'Updated product name',
-      description: 'Updated product description',
-      price: 200,
-    };
-
     const response = await request(app.getHttpServer())
-      .patch(`/v1/products/${createdProduct.body.id}`)
+      .delete(`/v1/products/${createdProduct.body.id}`)
       .set('Authorization', `Bearer ${res.access_token}`)
-      .send(updateProductDto)
       .expect(200);
 
-    expect(response.body.name).toEqual(updateProductDto.name);
-    expect(response.body.description).toEqual(updateProductDto.description);
-    expect(response.body.price).toEqual(updateProductDto.price);
-    expect(response.body.category).toEqual(mockCreateProductDto.category);
-    expect(response.body.sellerId).toEqual(res.user.id);
-    expect(response.body.id).toEqual(createdProduct.body.id);
-    expect(response.body.createdAt).toBeDefined();
-    expect(response.body.updatedAt).toBeDefined();
-    expect(response.body.isAvailable).toEqual(true);
+    expect(isDateString(response.body.deletedAt)).toEqual(true);
+    expect(response.body.isAvailable).toEqual(false);
   });
 
-  it(`PATCH - v1/products/:id an admin should be able to update any product`, async () => {
+  it(`DELETE - v1/products/:id an admin should be able to delete any product`, async () => {
     const admin = await signInForTest(authService, {
       role: 'ADMIN',
       email: 'johnadmin@email.com',
@@ -107,30 +94,16 @@ describe('ProductModule - updateProduct', () => {
       .send(mockCreateProductDto)
       .expect(201);
 
-    const updateProductDto = {
-      name: 'Updated product name',
-      description: 'Updated product description',
-      price: 200,
-    };
-
     const response = await request(app.getHttpServer())
-      .patch(`/v1/products/${createdProduct.body.id}`)
+      .delete(`/v1/products/${createdProduct.body.id}`)
       .set('Authorization', `Bearer ${admin.access_token}`)
-      .send(updateProductDto)
       .expect(200);
 
-    expect(response.body.name).toEqual(updateProductDto.name);
-    expect(response.body.description).toEqual(updateProductDto.description);
-    expect(response.body.price).toEqual(updateProductDto.price);
-    expect(response.body.category).toEqual(mockCreateProductDto.category);
-    expect(response.body.sellerId).toEqual(user.user.id);
-    expect(response.body.id).toEqual(createdProduct.body.id);
-    expect(response.body.createdAt).toBeDefined();
-    expect(response.body.updatedAt).toBeDefined();
-    expect(response.body.isAvailable).toEqual(true);
+    expect(isDateString(response.body.deletedAt)).toEqual(true);
+    expect(response.body.isAvailable).toEqual(false);
   });
 
-  it(`PATCH - v1/products/:id should throw error if product cannot be found`, async () => {
+  it(`DELETE - v1/products/:id should throw error if product cannot be found`, async () => {
     const res = await signInForTest(authService, {
       role: 'ADMIN',
       email: 'admin@email.com',
@@ -138,18 +111,18 @@ describe('ProductModule - updateProduct', () => {
     });
 
     await request(app.getHttpServer())
-      .patch(`/v1/products/someproductid`)
+      .delete(`/v1/products/someproductid`)
       .set('Authorization', `Bearer ${res.access_token}`)
       .expect(404);
   });
 
-  it(`PATCH - v1/products/:id should throw error if requester is not authenticated`, async () => {
+  it(`DELETE - v1/products/:id should throw error if requester is not authenticated`, async () => {
     await request(app.getHttpServer())
-      .patch(`/v1/products/someproductid`)
+      .delete(`/v1/products/someproductid`)
       .expect(401);
   });
 
-  it(`PATCH - v1/products/:id should throw forbidden error if requester is not the owner of the product`, async () => {
+  it(`DELETE - v1/products/:id should throw forbidden error if requester is not the owner of the product`, async () => {
     const user1 = await signInForTest(authService, {
       role: 'USER',
       email: 'johnauser1@email.com',
@@ -175,16 +148,9 @@ describe('ProductModule - updateProduct', () => {
       .send(mockCreateProductDto)
       .expect(201);
 
-    const updateProductDto = {
-      name: 'Updated product name',
-      description: 'Updated product description',
-      price: 200,
-    };
-
     await request(app.getHttpServer())
-      .patch(`/v1/products/${createdProduct.body.id}`)
+      .delete(`/v1/products/${createdProduct.body.id}`)
       .set('Authorization', `Bearer ${user2.access_token}`)
-      .send(updateProductDto)
       .expect(403);
   });
 });

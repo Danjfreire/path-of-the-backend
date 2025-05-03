@@ -90,8 +90,15 @@ export class ProductsController {
     return updatedProduct;
   }
 
+  @Roles('ADMIN', 'USER')
   @Delete(':id')
-  deleteProduct(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  async deleteProduct(@Param('id') id: string, @ReqUser() user: TokenPayload) {
+    const deletedProduct = await this.productsService.deleteProduct(id, user);
+
+    if (!deletedProduct) {
+      throw new NotFoundException('product-not-found');
+    }
+
+    return deletedProduct;
   }
 }

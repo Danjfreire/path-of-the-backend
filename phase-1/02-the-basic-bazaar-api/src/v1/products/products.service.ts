@@ -48,7 +48,18 @@ export class ProductsService {
     return await this.productsRepository.updateProduct(id, updateProductDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async deleteProduct(id: string, user: TokenPayload) {
+    const product = await this.productsRepository.findProduct(id);
+
+    if (!product) {
+      return null;
+    }
+
+    // only the owner of the product or admin can update the product
+    if (product.sellerId !== user.sub && user.role !== 'ADMIN') {
+      throw new ForbiddenException('product-not-owned');
+    }
+
+    return await this.productsRepository.deleteProduct(id);
   }
 }

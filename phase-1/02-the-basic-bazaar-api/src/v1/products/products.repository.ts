@@ -104,7 +104,27 @@ export class ProductsRepository {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async deleteProduct(id: string) {
+    try {
+      const product = await this.prismaService.product.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          isAvailable: false,
+        },
+      });
+
+      return product;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // error P2025 happens when the record to delete is not found
+        if (error.code === 'P2025') {
+          return null;
+        }
+      }
+
+      console.error(error);
+      return null;
+    }
   }
 }

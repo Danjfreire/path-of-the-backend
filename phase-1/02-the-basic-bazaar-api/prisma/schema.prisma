@@ -50,4 +50,5 @@ model Product {
   isAvailable Boolean  @default(true)
   sellerId    String
   seller      User     @relation(fields: [sellerId], references: [id])
+  deletedAt   DateTime? 
 }

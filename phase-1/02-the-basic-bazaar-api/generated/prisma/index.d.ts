@@ -2125,6 +2125,7 @@ export namespace Prisma {
     updatedAt: Date | null
     isAvailable: boolean | null
     sellerId: string | null
+    deletedAt: Date | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -2137,6 +2138,7 @@ export namespace Prisma {
     updatedAt: Date | null
     isAvailable: boolean | null
     sellerId: string | null
+    deletedAt: Date | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -2149,6 +2151,7 @@ export namespace Prisma {
     updatedAt: number
     isAvailable: number
     sellerId: number
+    deletedAt: number
     _all: number
   }
 
@@ -2171,6 +2174,7 @@ export namespace Prisma {
     updatedAt?: true
     isAvailable?: true
     sellerId?: true
+    deletedAt?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -2183,6 +2187,7 @@ export namespace Prisma {
     updatedAt?: true
     isAvailable?: true
     sellerId?: true
+    deletedAt?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -2195,6 +2200,7 @@ export namespace Prisma {
     updatedAt?: true
     isAvailable?: true
     sellerId?: true
+    deletedAt?: true
     _all?: true
   }
 
@@ -2294,6 +2300,7 @@ export namespace Prisma {
     updatedAt: Date
     isAvailable: boolean
     sellerId: string
+    deletedAt: Date | null
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -2325,6 +2332,7 @@ export namespace Prisma {
     updatedAt?: boolean
     isAvailable?: boolean
     sellerId?: boolean
+    deletedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -2338,6 +2346,7 @@ export namespace Prisma {
     updatedAt?: boolean
     isAvailable?: boolean
     sellerId?: boolean
+    deletedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -2351,6 +2360,7 @@ export namespace Prisma {
     updatedAt?: boolean
     isAvailable?: boolean
     sellerId?: boolean
+    deletedAt?: boolean
     seller?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -2364,9 +2374,10 @@ export namespace Prisma {
     updatedAt?: boolean
     isAvailable?: boolean
     sellerId?: boolean
+    deletedAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "category" | "createdAt" | "updatedAt" | "isAvailable" | "sellerId", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "category" | "createdAt" | "updatedAt" | "isAvailable" | "sellerId" | "deletedAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     seller?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2392,6 +2403,7 @@ export namespace Prisma {
       updatedAt: Date
       isAvailable: boolean
       sellerId: string
+      deletedAt: Date | null
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -2825,6 +2837,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
     readonly isAvailable: FieldRef<"Product", 'Boolean'>
     readonly sellerId: FieldRef<"Product", 'String'>
+    readonly deletedAt: FieldRef<"Product", 'DateTime'>
   }
     
 
@@ -3273,7 +3286,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     isAvailable: 'isAvailable',
-    sellerId: 'sellerId'
+    sellerId: 'sellerId',
+    deletedAt: 'deletedAt'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -3293,6 +3307,14 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -3462,6 +3484,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isAvailable?: BoolFilter<"Product"> | boolean
     sellerId?: StringFilter<"Product"> | string
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -3475,6 +3498,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isAvailable?: SortOrder
     sellerId?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     seller?: UserOrderByWithRelationInput
   }
 
@@ -3491,6 +3515,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isAvailable?: BoolFilter<"Product"> | boolean
     sellerId?: StringFilter<"Product"> | string
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
     seller?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -3504,6 +3529,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isAvailable?: SortOrder
     sellerId?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -3524,6 +3550,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     isAvailable?: BoolWithAggregatesFilter<"Product"> | boolean
     sellerId?: StringWithAggregatesFilter<"Product"> | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
   }
 
   export type UserCreateInput = {
@@ -3595,6 +3622,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     isAvailable?: boolean
+    deletedAt?: Date | string | null
     seller: UserCreateNestedOneWithoutProductsInput
   }
 
@@ -3608,6 +3636,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     isAvailable?: boolean
     sellerId: string
+    deletedAt?: Date | string | null
   }
 
   export type ProductUpdateInput = {
@@ -3619,6 +3648,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     seller?: UserUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -3632,6 +3662,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     sellerId?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProductCreateManyInput = {
@@ -3644,6 +3675,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     isAvailable?: boolean
     sellerId: string
+    deletedAt?: Date | string | null
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -3655,6 +3687,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -3667,6 +3700,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     sellerId?: StringFieldUpdateOperationsInput | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -3787,9 +3821,25 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type ProductCountOrderByAggregateInput = {
@@ -3802,6 +3852,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isAvailable?: SortOrder
     sellerId?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -3818,6 +3869,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isAvailable?: SortOrder
     sellerId?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -3830,6 +3882,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     isAvailable?: SortOrder
     sellerId?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -3882,6 +3935,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type ProductCreateNestedManyWithoutSellerInput = {
@@ -3958,6 +4025,10 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutProductsNestedInput = {
@@ -4061,6 +4132,17 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -4109,6 +4191,31 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ProductCreateWithoutSellerInput = {
     id?: string
     name: string
@@ -4118,6 +4225,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     isAvailable?: boolean
+    deletedAt?: Date | string | null
   }
 
   export type ProductUncheckedCreateWithoutSellerInput = {
@@ -4129,6 +4237,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     isAvailable?: boolean
+    deletedAt?: Date | string | null
   }
 
   export type ProductCreateOrConnectWithoutSellerInput = {
@@ -4170,6 +4279,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     isAvailable?: BoolFilter<"Product"> | boolean
     sellerId?: StringFilter<"Product"> | string
+    deletedAt?: DateTimeNullableFilter<"Product"> | Date | string | null
   }
 
   export type UserCreateWithoutProductsInput = {
@@ -4229,6 +4339,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     isAvailable?: boolean
+    deletedAt?: Date | string | null
   }
 
   export type ProductUpdateWithoutSellerInput = {
@@ -4240,6 +4351,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProductUncheckedUpdateWithoutSellerInput = {
@@ -4251,6 +4363,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProductUncheckedUpdateManyWithoutSellerInput = {
@@ -4262,6 +4375,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 
