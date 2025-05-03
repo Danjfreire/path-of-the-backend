@@ -81,8 +81,27 @@ export class ProductsRepository {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async updateProduct(id: string, updateProductDto: UpdateProductDto) {
+    try {
+      const product = await this.prismaService.product.update({
+        where: { id },
+        data: {
+          ...updateProductDto,
+        },
+      });
+
+      return product;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // error P2025 happens when the record to update is not found
+        if (error.code === 'P2025') {
+          return null;
+        }
+      }
+
+      console.error(error);
+      return null;
+    }
   }
 
   remove(id: number) {

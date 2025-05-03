@@ -70,12 +70,24 @@ export class ProductsController {
     return product;
   }
 
+  @Roles('ADMIN', 'USER')
   @Patch(':id')
-  updateProduct(
+  async updateProduct(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
+    @ReqUser() user: TokenPayload,
   ) {
-    return this.productsService.update(+id, updateProductDto);
+    const updatedProduct = await this.productsService.updateProduct(
+      id,
+      user,
+      updateProductDto,
+    );
+
+    if (!updatedProduct) {
+      throw new NotFoundException('product-not-found');
+    }
+
+    return updatedProduct;
   }
 
   @Delete(':id')

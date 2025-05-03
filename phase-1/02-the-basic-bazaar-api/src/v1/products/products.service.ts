@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { ProductCategory } from 'generated/prisma';
+import { TokenPayload } from '../auth/models/token-payload';
 
 @Injectable()
 export class ProductsService {
@@ -28,8 +29,23 @@ export class ProductsService {
     return await this.productsRepository.findProduct(id);
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async updateProduct(
+    id: string,
+    user: TokenPayload,
+    updateProductDto: UpdateProductDto,
+  ) {
+    const product = await this.productsRepository.findProduct(id);
+
+    if (!product) {
+      return null;
+    }
+
+    // only the owner of the product or admin can update the product
+    if (product.sellerId !== user.sub && user.role !== 'ADMIN') {
+      throw new ForbiddenException('product-not-owned');
+    }
+
+    return await this.productsRepository.updateProduct(id, updateProductDto);
   }
 
   remove(id: number) {
