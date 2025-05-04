@@ -12,12 +12,16 @@ import { AuthModule } from 'src/v1/auth/auth.module';
 import { ProductsModule } from '../products.module';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { ProductsService } from '../products.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { Product } from 'generated/prisma';
 
 describe('ProductModule - findAllProducts', () => {
   let app: INestApplication;
   let prismaUtils: PrismaTestUtils;
   let authService: AuthService;
   let productService: ProductsService;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -33,10 +37,12 @@ describe('ProductModule - findAllProducts', () => {
 
     authService = moduleRef.get<AuthService>(AuthService);
     productService = moduleRef.get<ProductsService>(ProductsService);
+    cacheManager = moduleRef.get<Cache>(CACHE_MANAGER);
   });
 
   afterEach(async () => {
     await prismaUtils.clearDatabase();
+    await cacheManager.clear();
   });
 
   afterAll(async () => {
@@ -185,5 +191,89 @@ describe('ProductModule - findAllProducts', () => {
 
   it(`GET - v1/products should throw error if requester is not authenticated`, async () => {
     await request(app.getHttpServer()).get(`/v1/products`).expect(401);
+  });
+
+  it('GET - v1/products should return products from cache', async () => {
+    const res = await signInForTest(authService, {
+      role: 'USER',
+      email: 'john@email.com',
+      password: '123456',
+    });
+
+    const mockedProduct: Product = {
+      id: 'mocked-product-id',
+      name: 'Mocked Product',
+      description: 'Mocked Product Description',
+      price: 100,
+      category: 'BOOKS',
+      sellerId: res.user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+      isAvailable: true,
+    };
+
+    await cacheManager.set(
+      `products:0:10:undefined:undefined:undefined:undefined`,
+      {
+        results: [mockedProduct],
+        total: 1,
+        resultsPerPage: 10,
+        nbPages: 1,
+        page: 0,
+      },
+      1000 * 60,
+    );
+
+    const response = await request(app.getHttpServer())
+      .get(`/v1/products`)
+      .query({ page: 0, limit: 10 })
+      .set('Authorization', `Bearer ${res.access_token}`)
+      .expect(200);
+
+    expect(response.body.results.length).toBe(1);
+    expect(response.body.total).toBe(1);
+    expect(response.body.resultsPerPage).toBe(10);
+    expect(response.body.nbPages).toBe(1);
+    expect(response.body.page).toBe(0);
+    expect(response.body.results[0].id).toEqual(mockedProduct.id);
+  });
+
+  it('GET - v1/products should fill cache', async () => {
+    const res = await signInForTest(authService, {
+      role: 'USER',
+      email: 'john@email.com',
+      password: '123456',
+    });
+
+    const cachePrevious = await cacheManager.get(
+      `products:0:10:undefined:undefined:undefined:undefined`,
+    );
+
+    expect(cachePrevious).toBe(null);
+
+    const response = await request(app.getHttpServer())
+      .get(`/v1/products`)
+      .query({ page: 0, limit: 10 })
+      .set('Authorization', `Bearer ${res.access_token}`)
+      .expect(200);
+
+    const cacheAfter = await cacheManager.get(
+      `products:0:10:undefined:undefined:undefined:undefined`,
+    );
+
+    expect(response.body.results.length).toBe(0);
+    expect(response.body.total).toBe(0);
+    expect(response.body.resultsPerPage).toBe(10);
+    expect(response.body.nbPages).toBe(0);
+    expect(response.body.page).toBe(0);
+
+    expect(cacheAfter).toEqual({
+      results: [],
+      total: 0,
+      resultsPerPage: 10,
+      nbPages: 0,
+      page: 0,
+    });
   });
 });
