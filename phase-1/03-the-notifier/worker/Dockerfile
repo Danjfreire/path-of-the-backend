@@ -9,10 +9,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copy source files
-COPY . .
+# COPY . .
 
 # Build the app
-RUN npm run build
+# RUN npm run build
 
 # Start the app
 CMD ["npm", "run", "start:dev"]

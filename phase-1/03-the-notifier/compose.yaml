@@ -27,16 +27,30 @@ services:
       - "3000:3000"
     depends_on:
       - db-dev 
+      - rabbitmq
     
   worker:
     build:
       context: ./worker
     env_file:
       - ./worker/.env.development 
+    volumes:
+      - ./worker:/app
+      - /app/node_modules
     ports:
       - "9000:9000"
     depends_on:
       - db-dev 
+      - rabbitmq
+  
+  rabbitmq:
+    image: 'rabbitmq:4.1.0-management-alpine'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
 volumes:
   pg_data:
