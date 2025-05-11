@@ -8,11 +8,4 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy source files
-# COPY . .
-
-# Build the app
-# RUN npm run build
-
-# Start the app
-CMD ["npm", "run", "start:dev"]
+COPY . /app

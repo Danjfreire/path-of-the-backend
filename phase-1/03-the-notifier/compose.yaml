@@ -18,11 +18,18 @@ services:
   api:
     build:
       context: ./api
+    command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     env_file:
-      - ./api/.env.development 
-    volumes:
-      - ./api:/app
-      - /app/node_modules
+      - .env.development 
     ports:
       - "3000:3000"
     depends_on:

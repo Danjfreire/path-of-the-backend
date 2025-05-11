@@ -11,6 +11,7 @@ export class AppController {
 
   @Get()
   getHello() {
+    console.log('called');
     const payload = { test: 'it works' };
     this.client.emit<typeof payload>('notification', payload);
     console.log('Notification sent:', payload);
