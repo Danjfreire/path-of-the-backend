@@ -25,7 +25,7 @@ services:
   api:
     build:
       context: ./api
-    command: npm run db:generate && npm run dev
+    command: npm run dev
     develop:
       watch:
         - action: sync
