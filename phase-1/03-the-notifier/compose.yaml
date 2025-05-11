@@ -1,24 +1,31 @@
 services:
   db-dev:
-    image: 'postgres:17.4-alpine3.21'
+    image: "postgres:17.4-alpine3.21"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     env_file:
       - .env.development
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
 
   db-test:
-    image: 'postgres:17.4-alpine3.21'
+    image: "postgres:17.4-alpine3.21"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     env_file:
       - .env.test
-  
+
   api:
     build:
       context: ./api
-    command: npm run dev
+    command: npm run db:generate && npm run dev
     develop:
       watch:
         - action: sync
@@ -29,35 +36,43 @@ services:
         - action: rebuild
           path: package.json
     env_file:
-      - .env.development 
+      - .env.development
     ports:
       - "3000:3000"
+    networks:
+      - db-network
     depends_on:
-      - db-dev 
-      - rabbitmq
-    
+      db-dev:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
   worker:
     build:
       context: ./worker
     env_file:
-      - ./worker/.env.development 
+      - ./worker/.env.development
     volumes:
       - ./worker:/app
       - /app/node_modules
     ports:
       - "9000:9000"
     depends_on:
-      - db-dev 
+      - db-dev
       - rabbitmq
-  
+
   rabbitmq:
-    image: 'rabbitmq:4.1.0-management-alpine'
+    image: "rabbitmq:4.1.0-management-alpine"
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
 
 volumes:
   pg_data:
+
+networks:
+  db-network:
+    name: db-network
