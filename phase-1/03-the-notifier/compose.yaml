@@ -37,6 +37,14 @@ services:
       - "5432:5432"
     env_file:
       - .env.test
+    networks:
+      - notification-db-network
+      - core-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
 
   core-api:
     build:
@@ -59,6 +67,29 @@ services:
       - core-db-network
     depends_on:
       db-core:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
+  core-api-test:
+    build:
+      context: ./core-api
+    command: npm run test:watch
+    develop:
+      watch:
+        - action: sync
+          path: ./core-api
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+    env_file:
+      - .env.test
+    networks:
+      - core-db-network
+    depends_on:
+      db-test:
         condition: service_healthy
       rabbitmq:
         condition: service_started

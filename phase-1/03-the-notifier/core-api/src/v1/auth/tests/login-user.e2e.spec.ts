@@ -5,7 +5,6 @@ import { AuthModule } from '../auth.module';
 import * as request from 'supertest';
 import { CreateUserDTO } from '../dto/register-user.dto';
 import { PrismaDatabaseModule } from 'src/_shared/prisma-database/prisma-database.module';
-import { ConfigModule } from '@nestjs/config';
 import { AuthController } from '../auth.controller';
 import { PrismaTestUtils } from 'src/_shared/test-utils/prisma-db-test.util';
 import { PrismaService } from 'src/_shared/prisma-database/prisma.service';
@@ -18,7 +17,7 @@ describe('AuthModule - LoginUser', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [PrismaDatabaseModule, ConfigModule, AuthModule],
+      imports: [PrismaDatabaseModule, AuthModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
