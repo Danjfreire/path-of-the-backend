@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { TokenPayload } from 'src/v1/auth/models/token-payload';
+import { TokenPayload } from '../token-payload';
 
 declare module 'express' {
   interface Request {
