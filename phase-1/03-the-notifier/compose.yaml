@@ -119,6 +119,31 @@ services:
       rabbitmq:
         condition: service_started
 
+  notification-api-test:
+    build:
+      context: ./notification-api
+    command: npm run test:watch
+    develop:
+      watch:
+        - action: sync
+          path: ./notification-api
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+    env_file:
+      - .env.test
+    networks:
+      - notification-network
+    ports:
+      - "9000:9000"
+    depends_on:
+      db-test:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
   rabbitmq:
     image: "rabbitmq:4.1.0-management-alpine"
     ports:

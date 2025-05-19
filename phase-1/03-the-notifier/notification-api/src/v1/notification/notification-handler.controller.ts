@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { NotificationService } from './notification.service';
+import { isEmail, isString, isUUID } from 'class-validator';
 
 @Controller()
 export class NotificationHandlerController {
@@ -19,9 +20,8 @@ export class NotificationHandlerController {
     const userContact = data.userContact;
     const orderId = data.orderId;
 
-    if (!userId || !userContact || !orderId) {
+    if (!isUUID(userId) || !isEmail(userContact.email) || !isUUID(orderId)) {
       channel.nack(originalMessage, false, true);
-      console.error('Invalid data received:', data);
       return;
     }
 

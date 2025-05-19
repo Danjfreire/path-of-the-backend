@@ -20,4 +20,11 @@ export class NotificationRepository {
       },
     });
   }
+
+  async getNotifications(options: { page: number; limit: number }) {
+    return this.prismaService.notification.findMany({
+      skip: options.page * options.limit,
+      take: options.limit,
+    });
+  }
 }

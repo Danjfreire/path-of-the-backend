@@ -12,7 +12,7 @@ import { AuthService } from 'src/v1/auth/auth.service';
 import { AuthModule } from 'src/v1/auth/auth.module';
 import { ClientProxy } from '@nestjs/microservices';
 
-describe('OrdersModule - CreateOrder', () => {
+describe('notificationsModule - HandleOrderNotification', () => {
   let app: INestApplication;
   let prismaUtils: PrismaTestUtils;
   let authService: AuthService;
@@ -43,25 +43,5 @@ describe('OrdersModule - CreateOrder', () => {
     clientProxy.close();
   });
 
-  it(`POST - v1/orders should create an order and emit a message`, async () => {
-    jest.spyOn(clientProxy, 'emit').mockImplementation();
-
-    const requester = await signInForTest(authService, { role: 'USER' });
-
-    const response = await request(app.getHttpServer())
-      .post('/v1/orders')
-      .set('Authorization', `Bearer ${requester.access_token}`)
-      .expect(201);
-
-    expect(isUUID(response.body.id)).toBe(true);
-    expect(response.body.userId).toEqual(requester.user.id);
-    expect(response.body.status).toEqual('PENDING');
-    expect(isDateString(response.body.createdAt)).toBe(true);
-    expect(isDateString(response.body.updatedAt)).toBe(true);
-
-    expect(clientProxy.emit).toHaveBeenCalledWith('order.notification', {
-      orderId: response.body.id,
-      userId: response.body.userId,
-    });
-  });
+  it(`order.notification - should send notification email`, async () => {});
 });

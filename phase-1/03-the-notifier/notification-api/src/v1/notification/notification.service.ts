@@ -27,4 +27,8 @@ export class NotificationService {
       },
     });
   }
+
+  async getNotifications(options: { page: number; limit: number }) {
+    return await this.notificationRepository.getNotifications(options);
+  }
 }
