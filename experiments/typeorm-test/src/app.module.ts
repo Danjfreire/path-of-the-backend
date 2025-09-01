@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { V1Module } from './v1/v1.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Institution } from './v1/institutions/models/institution.entity';
+import { School } from './v1/schools/models/school.entity';
+import { Classroom } from './v1/classrooms/models/classroom.entity';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { Institution } from './v1/institutions/models/institution.entity';
       username: 'postgres',
       password: 'password',
       database: 'postgres',
-      entities: [Institution],
+      entities: [Institution, School, Classroom],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
     }),

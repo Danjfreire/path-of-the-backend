@@ -35,7 +35,7 @@ export class InstitutionsController {
   @Get()
   async listInstitutions(
     @Query('limit') limit = 10,
-    @Query('cursor') cursor?: string,
+    @Query('cursor') cursor?: number,
   ) {
     const query = this.institutionRepo
       .createQueryBuilder('institution')
@@ -48,9 +48,9 @@ export class InstitutionsController {
 
     const institutions = await query.getMany();
 
-    let nextCursor: string | null = null;
+    let nextCursor: number | null = null;
     if (institutions.length === +limit) {
-      nextCursor = institutions[institutions.length - 1].id.toString(); // Assuming 'id' is a number
+      nextCursor = institutions[institutions.length - 1].id;
     }
 
     return {
