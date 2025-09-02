@@ -16,6 +16,9 @@ export class Classroom {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: true })
+  level: string;
+
   @Column({ nullable: false })
   code: string;
 
